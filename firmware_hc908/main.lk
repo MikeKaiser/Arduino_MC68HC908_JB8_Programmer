@@ -1,0 +1,10 @@
+-muwx
+-s main.s19
+-Y
+-b HOME = 0xDC00
+-b DSEG = 0x0080
+-k C:\Program Files\SDCC\bin\..\lib\hc08
+-l hc08
+main.rel
+
+-e
