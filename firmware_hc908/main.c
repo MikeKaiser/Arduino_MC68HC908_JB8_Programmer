@@ -26,7 +26,7 @@
 
 
 
-
+#if 0
 void initSADC()
 {
 	// disable internal Pull-Ups on PTE
@@ -1090,4 +1090,21 @@ __endasm;
 		while( n < 8 );
 	}
 }
+#else
+
+void main()
+{
+	// Sit in a loop toggling PTA0 to test the firmware is running
+	DDRA = 255;	// set all pins as output
+	PTA = 255;
+	while( 1 )
+	{
+		PTA = 255;
+		PTA = 0;
+	}
+}
+
+
+#endif
+
 

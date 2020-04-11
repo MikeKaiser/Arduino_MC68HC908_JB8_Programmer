@@ -48,7 +48,7 @@ void SetMemory( uint32_t addr, uint8_t data )
 void SetMemory( uint32_t addr, uint32_t bufIdx, uint8_t count )
 {
 	// Scan the line buffer for data and write it to our memory buffer
-	for( int i=0; i<(count-1); ++i )
+	for( int i=0; i<count; ++i )
 	{
 		SetMemory( addr++, (HexToInt(lineBuf[bufIdx++]) << 4) | HexToInt(lineBuf[bufIdx++]) );
 	}
@@ -190,7 +190,7 @@ void MassErase( uint32_t timeout )
 	WaitForOK( timeout );
 }
 
-void ResetHC908( uint32_t timeout )
+bool ResetHC908( uint32_t timeout )
 {
 	uint8_t tx[4];
 	tx[0] = 5;
@@ -198,10 +198,10 @@ void ResetHC908( uint32_t timeout )
 	tx[2] = 0;
 	tx[3] = 0;
 	gSerial.WriteData( (char *)tx, 4 );
-	WaitForOK( timeout );
+	return WaitForOK( timeout );
 }
 
-void SendSecurity( uint32_t timeout )
+bool SendSecurity( uint32_t timeout )
 {
 	uint8_t tx[4];
 	tx[0] = 6;
@@ -209,7 +209,7 @@ void SendSecurity( uint32_t timeout )
 	tx[2] = 0;
 	tx[3] = 0;
 	gSerial.WriteData( (char *)tx, 4 );
-	WaitForOK( timeout );
+	return WaitForOK( timeout );
 }
 
 
@@ -225,11 +225,12 @@ void ProcessRecord()
 	switch( lineBuf[ 1 ] )
 	{
 		case '1':
+			// Note : [count] includes the 2 address bytes and the checksum byte
 			addr = HexToInt( lineBuf[ 4 ] ) << 12;
 			addr |= HexToInt( lineBuf[ 5 ] ) << 8;
 			addr |= HexToInt( lineBuf[ 6 ] ) << 4;
 			addr |= HexToInt( lineBuf[ 7 ] );
-			SetMemory( addr, 8, count-4 ); // skip the 4 address characters in the count 
+			SetMemory( addr, 8, count-3 ); // skip the 4 address characters in the count 
 			break;
 		case '9':
 			break;
@@ -312,13 +313,11 @@ int main( int argc, char * argv[] )
 
 
 		printf( "Reseting\n" );
-		ResetHC908(20*SECONDS);
-
-
+		if( ResetHC908(20*SECONDS) )
+		{
 		printf( "Sending Security Bytes\n" );
-		SendSecurity(20*SECONDS);
-
-
+			if( SendSecurity(20*SECONDS) )
+			{
 		uint8_t security = ReadByte( 0x0040, 1*SECONDS );
 		printf( "Security Byte = %02X : %s\n", security, (security&(1<<6))?"Passed":"Failed" );
 		WriteByte( 0x0040, 0x55, 1*SECONDS );
@@ -385,8 +384,8 @@ int main( int argc, char * argv[] )
 		{
 			printf( "Verify Succeeded!\n" );
 		}
-
-
+			}
+		}
 
 		gSerial.Close();
 	}

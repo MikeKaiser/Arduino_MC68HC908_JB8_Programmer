@@ -410,7 +410,7 @@ void ConfigureInitialHC908Pins()
 void ResetHC908()
 {
   ConfigureInitialHC908Pins();
-  delay(2);
+  delay(5);
   digitalWrite( HC908_RST,  1 );
 }
 
@@ -584,7 +584,7 @@ void loop()
     if( watchdog > 65500 )
     {
       watchdog = 0;
-      //gBufIdx = 0;
+      gBufIdx = 0;
     }
   }
 }
