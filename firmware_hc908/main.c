@@ -1092,6 +1092,12 @@ __endasm;
 }
 #else
 
+void __sdcc_external_startup()
+{
+	CONFIG = 0x21;	// USB Reset Disable, COP Disable
+	TSC = 0x00;	// clear TSTOP, Prescaler=0
+}
+
 void main()
 {
 	// Sit in a loop toggling PTA0 to test the firmware is running
