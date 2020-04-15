@@ -6,5 +6,5 @@
 -k C:\Program Files\SDCC\bin\..\lib\hc08
 -l hc08
 main.rel
-
+reset.rel
 -e

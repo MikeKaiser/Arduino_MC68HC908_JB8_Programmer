@@ -1092,7 +1092,7 @@ __endasm;
 }
 #else
 
-void _sdcc_external_startup() // SDCC adds an underscore to the symbol name so we use one less otherwise we get an invalid address
+void nomain()  __naked  /* __interrupt 0 <- nope, can't use this, that would be too easy! */
 {
 	// COP Disable : this prevents the "Computer Operating Properly" module from reseting us if 0xFFFF is not regularly cleared.
 	// USB Reset Disable : Prevents the USB host from physically resetting us. Instead it generates an interrupt.
@@ -1100,10 +1100,7 @@ void _sdcc_external_startup() // SDCC adds an underscore to the symbol name so w
 
 	// clear TSTOP, Prescaler=0	
 	TSC = 0x00;	
-}
 
-void main()
-{
 	// Sit in a loop toggling PTA0 to test the firmware is running
 	DDRA = 255;	// set all pins as output
 	PTA = 255;
@@ -1113,7 +1110,6 @@ void main()
 		PTA = 0;
 	}
 }
-
 
 #endif
 
