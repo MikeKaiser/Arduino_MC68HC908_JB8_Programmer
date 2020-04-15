@@ -11,8 +11,8 @@ if exist main.lk (
 
 del *.asm
 del *.cdb
-del *.lst
+REM del *.lst
 del *.map
 del *.rel
-del *.rst
+REM del *.rst
 del *.sym

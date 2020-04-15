@@ -1092,10 +1092,14 @@ __endasm;
 }
 #else
 
-void __sdcc_external_startup()
+void _sdcc_external_startup() // SDCC adds an underscore to the symbol name so we use one less otherwise we get an invalid address
 {
-	CONFIG = 0x21;	// USB Reset Disable, COP Disable
-	TSC = 0x00;	// clear TSTOP, Prescaler=0
+	// COP Disable : this prevents the "Computer Operating Properly" module from reseting us if 0xFFFF is not regularly cleared.
+	// USB Reset Disable : Prevents the USB host from physically resetting us. Instead it generates an interrupt.
+	CONFIG = 0x21;
+
+	// clear TSTOP, Prescaler=0	
+	TSC = 0x00;	
 }
 
 void main()

@@ -1,0 +1,290 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 4.0.0 #11528 (MINGW64)
+                              4 ;--------------------------------------------------------
+                              5 	.module main
+                              6 	.optsdcc -mhc08
+                              7 	
+                              8 	.area HOME    (CODE)
+                              9 	.area GSINIT0 (CODE)
+                             10 	.area GSINIT  (CODE)
+                             11 	.area GSFINAL (CODE)
+                             12 	.area CSEG    (CODE)
+                             13 	.area XINIT   (CODE)
+                             14 	.area CONST   (CODE)
+                             15 	.area DSEG    (PAG)
+                             16 	.area OSEG    (PAG, OVR)
+                             17 	.area XSEG
+                             18 	.area XISEG
+                             19 	.area	CODEIVT (ABS)
+   FFFE                      20 	.org	0xfffe
+   FFFE DC 00                21 	.dw	__sdcc_gs_init_startup
+                             22 
+                             23 	.area GSINIT0
+   DC00                      24 __sdcc_gs_init_startup:
+   DC00 45 80 00      [ 3]   25 	ldhx	#0x8000
+   DC03 94            [ 2]   26 	txs
+   DC04 CD DC 26      [ 5]   27 	jsr	__sdcc_external_startup
+   DC07 27 03         [ 3]   28 	beq	__sdcc_init_data
+   DC09 CC DC 21      [ 3]   29 	jmp	__sdcc_program_startup
+   DC0C                      30 __sdcc_init_data:
+                             31 ; _hc08_genXINIT() start
+   DC0C 45 00 00      [ 3]   32         ldhx #0
+   DC0F                      33 00001$:
+   DC0F 65 00 00      [ 3]   34         cphx #l_XINIT
+   DC12 27 0A         [ 3]   35         beq  00002$
+   DC14 D6 DC 3C      [ 4]   36         lda  s_XINIT,x
+   DC17 D7 00 80      [ 4]   37         sta  s_XISEG,x
+   DC1A AF 01         [ 2]   38         aix  #1
+   DC1C 20 F1         [ 3]   39         bra  00001$
+   DC1E                      40 00002$:
+                             41 ; _hc08_genXINIT() end
+                             42 	.area GSFINAL
+   DC1E CC DC 21      [ 3]   43 	jmp	__sdcc_program_startup
+                             44 
+                             45 	.area CSEG
+   DC21                      46 __sdcc_program_startup:
+   DC21 CD DC 2D      [ 5]   47 	jsr	_main
+   DC24 20 FE         [ 3]   48 	bra	.
+                             49 ;--------------------------------------------------------
+                             50 ; Public variables in this module
+                             51 ;--------------------------------------------------------
+                             52 	.globl _main
+                             53 	.globl __sdcc_external_startup
+                             54 	.globl _COPCTL
+                             55 	.globl _BRKSCR
+                             56 	.globl _BRKL
+                             57 	.globl _BRKH
+                             58 	.globl _BRK
+                             59 	.globl _FLBPR
+                             60 	.globl _FLCR
+                             61 	.globl _INT1
+                             62 	.globl _BFCR
+                             63 	.globl _RSR
+                             64 	.globl _BSR
+                             65 	.globl _USR1
+                             66 	.globl _USR0
+                             67 	.globl _UCR1
+                             68 	.globl _UCR0
+                             69 	.globl _UIR1
+                             70 	.globl _UIR0
+                             71 	.globl _UADDR
+                             72 	.globl _UE2D7
+                             73 	.globl _UE2D6
+                             74 	.globl _UE2D5
+                             75 	.globl _UE2D4
+                             76 	.globl _UE2D3
+                             77 	.globl _UE2D2
+                             78 	.globl _UE2D1
+                             79 	.globl _UE2D0
+                             80 	.globl _UE1D7
+                             81 	.globl _UE1D6
+                             82 	.globl _UE1D5
+                             83 	.globl _UE1D4
+                             84 	.globl _UE1D3
+                             85 	.globl _UE1D2
+                             86 	.globl _UE1D1
+                             87 	.globl _UE1D0
+                             88 	.globl _UE0D7
+                             89 	.globl _UE0D6
+                             90 	.globl _UE0D5
+                             91 	.globl _UE0D4
+                             92 	.globl _UE0D3
+                             93 	.globl _UE0D2
+                             94 	.globl _UE0D1
+                             95 	.globl _UE0D0
+                             96 	.globl _CONFIG
+                             97 	.globl _ISCR
+                             98 	.globl _POCR
+                             99 	.globl _IOCR
+                            100 	.globl _UCR4
+                            101 	.globl _UCR3
+                            102 	.globl _UCR2
+                            103 	.globl _UIR2
+                            104 	.globl _KBIER
+                            105 	.globl _KBSCR
+                            106 	.globl _TCH1L
+                            107 	.globl _TCH1H
+                            108 	.globl _TCH1
+                            109 	.globl _TSC1
+                            110 	.globl _TCH0L
+                            111 	.globl _TCH0H
+                            112 	.globl _TCH0
+                            113 	.globl _TSC0
+                            114 	.globl _TMODL
+                            115 	.globl _TMODH
+                            116 	.globl _TMOD
+                            117 	.globl _TCNTL
+                            118 	.globl _TCNTH
+                            119 	.globl _TCNT
+                            120 	.globl _TSC
+                            121 	.globl _DDRE
+                            122 	.globl _PTE
+                            123 	.globl _DDRD
+                            124 	.globl _DDRC
+                            125 	.globl _DDRB
+                            126 	.globl _DDRA
+                            127 	.globl _PTD
+                            128 	.globl _PTC
+                            129 	.globl _PTB
+                            130 	.globl _PTA
+                            131 ;--------------------------------------------------------
+                            132 ; ram data
+                            133 ;--------------------------------------------------------
+                            134 	.area DSEG    (PAG)
+                     0000   135 _PTA	=	0x0000
+                     0001   136 _PTB	=	0x0001
+                     0002   137 _PTC	=	0x0002
+                     0003   138 _PTD	=	0x0003
+                     0004   139 _DDRA	=	0x0004
+                     0005   140 _DDRB	=	0x0005
+                     0006   141 _DDRC	=	0x0006
+                     0007   142 _DDRD	=	0x0007
+                     0008   143 _PTE	=	0x0008
+                     0009   144 _DDRE	=	0x0009
+                     000A   145 _TSC	=	0x000a
+                     000C   146 _TCNT	=	0x000c
+                     000C   147 _TCNTH	=	0x000c
+                     000D   148 _TCNTL	=	0x000d
+                     000E   149 _TMOD	=	0x000e
+                     000E   150 _TMODH	=	0x000e
+                     000F   151 _TMODL	=	0x000f
+                     0010   152 _TSC0	=	0x0010
+                     0011   153 _TCH0	=	0x0011
+                     0011   154 _TCH0H	=	0x0011
+                     0012   155 _TCH0L	=	0x0012
+                     0013   156 _TSC1	=	0x0013
+                     0014   157 _TCH1	=	0x0014
+                     0014   158 _TCH1H	=	0x0014
+                     0015   159 _TCH1L	=	0x0015
+                     0016   160 _KBSCR	=	0x0016
+                     0017   161 _KBIER	=	0x0017
+                     0018   162 _UIR2	=	0x0018
+                     0019   163 _UCR2	=	0x0019
+                     001A   164 _UCR3	=	0x001a
+                     001B   165 _UCR4	=	0x001b
+                     001C   166 _IOCR	=	0x001c
+                     001D   167 _POCR	=	0x001d
+                     001E   168 _ISCR	=	0x001e
+                     001F   169 _CONFIG	=	0x001f
+                     0020   170 _UE0D0	=	0x0020
+                     0021   171 _UE0D1	=	0x0021
+                     0022   172 _UE0D2	=	0x0022
+                     0023   173 _UE0D3	=	0x0023
+                     0024   174 _UE0D4	=	0x0024
+                     0025   175 _UE0D5	=	0x0025
+                     0026   176 _UE0D6	=	0x0026
+                     0027   177 _UE0D7	=	0x0027
+                     0028   178 _UE1D0	=	0x0028
+                     0029   179 _UE1D1	=	0x0029
+                     002A   180 _UE1D2	=	0x002a
+                     002B   181 _UE1D3	=	0x002b
+                     002C   182 _UE1D4	=	0x002c
+                     002D   183 _UE1D5	=	0x002d
+                     002E   184 _UE1D6	=	0x002e
+                     002F   185 _UE1D7	=	0x002f
+                     0030   186 _UE2D0	=	0x0030
+                     0031   187 _UE2D1	=	0x0031
+                     0032   188 _UE2D2	=	0x0032
+                     0033   189 _UE2D3	=	0x0033
+                     0034   190 _UE2D4	=	0x0034
+                     0035   191 _UE2D5	=	0x0035
+                     0036   192 _UE2D6	=	0x0036
+                     0037   193 _UE2D7	=	0x0037
+                     0038   194 _UADDR	=	0x0038
+                     0039   195 _UIR0	=	0x0039
+                     003A   196 _UIR1	=	0x003a
+                     003B   197 _UCR0	=	0x003b
+                     003C   198 _UCR1	=	0x003c
+                     003D   199 _USR0	=	0x003d
+                     003E   200 _USR1	=	0x003e
+                            201 ;--------------------------------------------------------
+                            202 ; overlayable items in ram 
+                            203 ;--------------------------------------------------------
+                            204 ;--------------------------------------------------------
+                            205 ; absolute ram data
+                            206 ;--------------------------------------------------------
+                            207 	.area IABS    (ABS)
+                            208 	.area IABS    (ABS)
+                            209 ;--------------------------------------------------------
+                            210 ; absolute external ram data
+                            211 ;--------------------------------------------------------
+                            212 	.area XABS    (ABS)
+                            213 ;--------------------------------------------------------
+                            214 ; external initialized ram data
+                            215 ;--------------------------------------------------------
+                            216 	.area XISEG
+                            217 ;--------------------------------------------------------
+                            218 ; extended address mode data
+                            219 ;--------------------------------------------------------
+                            220 	.area XSEG
+                     FE00   221 _BSR	=	0xfe00
+                     FE01   222 _RSR	=	0xfe01
+                     FE03   223 _BFCR	=	0xfe03
+                     FE04   224 _INT1	=	0xfe04
+                     FE08   225 _FLCR	=	0xfe08
+                     FE09   226 _FLBPR	=	0xfe09
+                     FE0C   227 _BRK	=	0xfe0c
+                     FE0C   228 _BRKH	=	0xfe0c
+                     FE0D   229 _BRKL	=	0xfe0d
+                     FE0E   230 _BRKSCR	=	0xfe0e
+                     FFFF   231 _COPCTL	=	0xffff
+                            232 ;--------------------------------------------------------
+                            233 ; global & static initialisations
+                            234 ;--------------------------------------------------------
+                            235 	.area HOME    (CODE)
+                            236 	.area GSINIT  (CODE)
+                            237 	.area GSFINAL (CODE)
+                            238 	.area GSINIT  (CODE)
+                            239 ;--------------------------------------------------------
+                            240 ; Home
+                            241 ;--------------------------------------------------------
+                            242 	.area HOME    (CODE)
+                            243 	.area HOME    (CODE)
+                            244 ;--------------------------------------------------------
+                            245 ; code
+                            246 ;--------------------------------------------------------
+                            247 	.area CSEG    (CODE)
+                            248 ;------------------------------------------------------------
+                            249 ;Allocation info for local variables in function '_sdcc_external_startup'
+                            250 ;------------------------------------------------------------
+                            251 ;main.c:1095: void _sdcc_external_startup()
+                            252 ;	-----------------------------------------
+                            253 ;	 function _sdcc_external_startup
+                            254 ;	-----------------------------------------
+                            255 ;	Register assignment is optimal.
+                            256 ;	Stack space usage: 0 bytes.
+   DC26                     257 __sdcc_external_startup:
+                            258 ;main.c:1097: CONFIG = 0x21;	// USB Reset Disable, COP Disable
+   DC26 6E 21 1F      [ 4]  259 	mov	#0x21,*0x1f
+                            260 ;main.c:1098: TSC = 0x00;	// clear TSTOP, Prescaler=0
+   DC29 6E 00 0A      [ 4]  261 	mov	#0x00,*0x0a
+                            262 ;main.c:1099: }
+   DC2C 81            [ 4]  263 	rts
+                            264 ;------------------------------------------------------------
+                            265 ;Allocation info for local variables in function 'main'
+                            266 ;------------------------------------------------------------
+                            267 ;main.c:1101: void main()
+                            268 ;	-----------------------------------------
+                            269 ;	 function main
+                            270 ;	-----------------------------------------
+                            271 ;	Register assignment is optimal.
+                            272 ;	Stack space usage: 0 bytes.
+   DC2D                     273 _main:
+                            274 ;main.c:1104: DDRA = 255;	// set all pins as output
+   DC2D 6E FF 04      [ 4]  275 	mov	#0xff,*0x04
+                            276 ;main.c:1105: PTA = 255;
+   DC30 6E FF 00      [ 4]  277 	mov	#0xff,*0x00
+                            278 ;main.c:1106: while( 1 )
+   DC33                     279 00102$:
+                            280 ;main.c:1108: PTA = 255;
+   DC33 6E FF 00      [ 4]  281 	mov	#0xff,*0x00
+                            282 ;main.c:1109: PTA = 0;
+   DC36 6E 00 00      [ 4]  283 	mov	#0x00,*0x00
+   DC39 20 F8         [ 3]  284 	bra	00102$
+                            285 ;main.c:1111: }
+   DC3B 81            [ 4]  286 	rts
+                            287 	.area CSEG    (CODE)
+                            288 	.area CONST   (CODE)
+                            289 	.area XINIT   (CODE)
+                            290 	.area CABS    (ABS,CODE)
