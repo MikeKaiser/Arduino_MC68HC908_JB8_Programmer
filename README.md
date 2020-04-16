@@ -11,7 +11,7 @@ To enter Monitor Mode we need the following
 Power the arduino from 12V for the high voltage with a voltage divider to generate 7 volts
 From table 10-1 of the HC908 datasheet,
 
-**HC908_PTA3=0**
+**HC908_PTA3=1**
 
 **HC908_PTA2=0**
 

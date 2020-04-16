@@ -190,10 +190,10 @@ void MassErase( uint32_t timeout )
 	WaitForOK( timeout );
 }
 
-bool ResetHC908( uint32_t timeout )
+bool ResetHC908( uint32_t timeout, bool forProgramming )
 {
 	uint8_t tx[ 4 ];
-	tx[ 0 ] = 5;
+	tx[ 0 ] = forProgramming?5:7;
 	tx[ 1 ] = 0;
 	tx[ 2 ] = 0;
 	tx[ 3 ] = 0;
@@ -313,7 +313,7 @@ int main( int argc, char* argv[] )
 
 
 		printf( "Reseting\n" );
-		if( ResetHC908( 20 * SECONDS ) )
+		if( ResetHC908( 20 * SECONDS, true ) )
 		{
 			printf( "Sending Security Bytes\n" );
 			if( SendSecurity( 20 * SECONDS ) )
@@ -382,7 +382,13 @@ int main( int argc, char* argv[] )
 
 				if( verifySuccess == true )
 				{
-					printf( "Verify Succeeded!\n" );
+					printf( "Verify Succeeded.\n" );
+				}
+
+
+				if( ResetHC908( 20 * SECONDS, false ) )	// Reset the HC908 and let it run
+				{
+					printf( "Reset to run-mode complete.\n" );
 				}
 			}
 		}

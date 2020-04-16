@@ -4,12 +4,12 @@
 #error Unsupported CPU. Only ATmega328P is supported
 #elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
 #define   ledPin 13
-#define   D9Pin 13
-#define   HC908_RST  6
-#define   HC908_PTA0 5   // This is PD1(pin3) on the ATmeg328P chip so we read it from PORTD directly in time critical bits
-#define   HC908_PTA1 4
-#define   HC908_PTA2 3   // This is PD3(pin5) 
-#define   HC908_PTA3 2
+#define   HC908_CLK_D9  9    // Fast PWM, it has to be this pin
+#define   HC908_RST     6
+#define   HC908_PTA0    5    // This is PD1(pin3) on the ATmeg328P chip so we read it from PORTD directly in time critical bits
+#define   HC908_PTA1    4
+#define   HC908_PTA2    3    // This is PD3(pin5) 
+#define   HC908_PTA3    2
 #elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
 #error Unsupported CPU. Only ATmega328P is supported
 #else
@@ -398,19 +398,45 @@ void EndRow()
 }
 
 
-void ConfigureInitialHC908Pins()
+void EnableProgrammingPins( bool forProgramming )
 {
-  digitalWrite( HC908_RST,  0 );
-  digitalWrite( HC908_PTA0, 1 );
-  digitalWrite( HC908_PTA1, 1 );
-  digitalWrite( HC908_PTA2, 0 );
-  digitalWrite( HC908_PTA3, 1 );
+  int mode = forProgramming ? OUTPUT : INPUT;
+  pinMode(10, mode);
+
+  pinMode( HC908_PTA1, mode );
+  pinMode( HC908_PTA2, mode );
+  pinMode( HC908_PTA3, mode );
 }
 
-void ResetHC908()
+void ConfigureInitialHC908Pins( bool forProgramming )
 {
-  ConfigureInitialHC908Pins();
-  delay(5);
+  if( forProgramming )
+  {
+    digitalWrite( HC908_RST,  0 );
+    digitalWrite( HC908_PTA0, 1 );
+    digitalWrite( HC908_PTA1, 1 );
+    digitalWrite( HC908_PTA2, 0 );
+    digitalWrite( HC908_PTA3, 1 );
+  }
+  else
+  {
+    digitalWrite( HC908_RST,  0 );
+    digitalWrite( HC908_PTA0, 0 );
+    digitalWrite( HC908_PTA1, 0 );
+    digitalWrite( HC908_PTA2, 0 );
+    digitalWrite( HC908_PTA3, 0 );
+  }
+}
+
+void ResetHC908( bool forProgramming )
+{
+  EnableProgrammingPins( forProgramming );
+  ConfigureInitialHC908Pins( forProgramming );
+  delay(10);
+}
+
+void ReleaseHC908()
+{
   digitalWrite( HC908_RST,  1 );
 }
 
@@ -429,6 +455,15 @@ bool SendSecurityBytes()
   return ReadByte(&rx);
 }
 
+void StartCLK()
+{
+  // initialize timer1 
+  noInterrupts();           // disable all interrupts
+  // tell the HC908 it's running at 6MHz (in reality it's 3.125MHz)
+  // and tell it that the internal bus frequency is 3MHz (in reality it's 1.5625MHz)
+  SetTimer1ForPWMOnD9();
+  interrupts();             // enable all interrupts  
+}
 
 void setup()
 {
@@ -442,27 +477,15 @@ void setup()
 
 
   pinMode(ledPin, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-
+  pinMode( HC908_CLK_D9, OUTPUT);
   pinMode( HC908_RST,  OUTPUT );
-  pinMode( HC908_PTA1, OUTPUT );
-  pinMode( HC908_PTA2, OUTPUT );
-  pinMode( HC908_PTA3, OUTPUT );
+  StartCLK();
   SetPTA0AsInput();
+  ResetHC908( false );
 
-  // tell the HC908 it's running at 6MHz (in reality it's 3.125MHz)
-  // and tell it that the internal bus frequency is 3MHz (in reality it's 1.5625MHz)
-  ConfigureInitialHC908Pins();
-
-
-  // initialize timer1 
-  noInterrupts();           // disable all interrupts
-  SetTimer1ForPWMOnD9();
-  interrupts();             // enable all interrupts
 
   delay( 5 );
-  digitalWrite( HC908_RST,  1 );  // Take the HC908 out of reset and latch it into MonitorMode
+  ReleaseHC908();  // Take the HC908 out of reset
   digitalWrite( ledPin, 1 );
   digitalWrite( HC908_PTA1, 0 );
   delay( 5 );
@@ -552,7 +575,9 @@ void ProcessByte( unsigned char b )
         }
         break;
       case 5:
-        ResetHC908();
+        ResetHC908( true );
+        delay( 5 );
+        ReleaseHC908();  // Take the HC908 out of reset and latch it into MonitorMode
         Serial.write( 'K' );
         break;
       case 6:
@@ -561,6 +586,12 @@ void ProcessByte( unsigned char b )
         else
           Serial.write( 'N' );
         break;
+      case 7:
+        ResetHC908( false );
+        delay( 5 );
+        ReleaseHC908();  // Take the HC908 out of reset and let it run
+        Serial.write( 'K' );
+        break;        
       default:
         Serial.write( 'N' );
     }
