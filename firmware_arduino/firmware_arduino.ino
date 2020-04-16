@@ -5,11 +5,11 @@
 #elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
 #define   ledPin 13
 #define   D9Pin 13
-#define   HC908_RST  2
-#define   HC908_PTA0 3   // This is PD3(pin5) on the ATmeg328P chip so we read it from PORTD directly in time critical bits
+#define   HC908_RST  6
+#define   HC908_PTA0 5   // This is PD1(pin3) on the ATmeg328P chip so we read it from PORTD directly in time critical bits
 #define   HC908_PTA1 4
-#define   HC908_PTA2 5
-#define   HC908_PTA3 6
+#define   HC908_PTA2 3   // This is PD3(pin5) 
+#define   HC908_PTA3 2
 #elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__)
 #error Unsupported CPU. Only ATmega328P is supported
 #else

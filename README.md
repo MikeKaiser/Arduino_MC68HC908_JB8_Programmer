@@ -33,11 +33,11 @@ After experimentation, timings for bit durations were obtained  so the correct b
 
 |Arduino	|HC908	|HC908	|Arduino|
 | ---------:| ----- | -----:| ----- |
-|	GND		|Vss 	|~RST	|D2 (10K pullup to Vdd)|
-|	D9		|OSC1	|PTA0	|D3|
+|	GND		|Vss 	|~RST	|D6 (10K pullup to Vdd)|
+|	D9		|OSC1	|PTA0	|D5|
 |			|OSC2	|PTA1	|D4|
-|			|VReg	|PTA2	|D5|
-|	+5V		|Vdd	|PTA3	|D6|
+|			|VReg	|PTA2	|D3|
+|	+5V		|Vdd	|PTA3	|D2|
 |			|PTD0	|PTA4||
 |			|PTE1	|PTA5||
 |			|PTR3	|PTA6||
